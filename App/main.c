@@ -1,6 +1,7 @@
 #define _POSIX_C_SOURCE 200809L
 
 #include <glib.h>
+#include <gio/gio.h>
 #include <unistd.h>
 #include <cmsis_os2.h>
 
@@ -55,9 +56,32 @@ void timer1Thread(void *data) {
 	}
 }
 
+static void my_callback(GObject *source_object, GAsyncResult *res,
+			gpointer user_data)
+{
+	printf("%p: %s\n", g_thread_self(), __func__);
+
+}
+
+static void my_thread(GTask *task, gpointer source_object,
+			     gpointer task_data, GCancellable *cancellable)
+{
+	printf("%p: %s\n", g_thread_self(), __func__);
+	g_task_return_pointer(task, g_object_new(G_TYPE_OBJECT, NULL), g_object_unref);
+}
+
 int main() {
 
 	osKernelInitialize();
+
+	GCancellable* cancellable = g_cancellable_new();
+
+	GObject *obj = g_object_new(G_TYPE_OBJECT, NULL);
+	GTask*  task = g_task_new(obj, cancellable, my_callback, obj);
+	g_object_unref(cancellable);
+	g_task_run_in_thread(task, my_thread);
+	g_object_unref(task);
+
 	queue = osMessageQueueNew(10, sizeof(uint32_t), NULL);
 
 	osThreadAttr_t thattr;

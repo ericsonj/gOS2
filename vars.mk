@@ -29,7 +29,7 @@ COMPILER_FLAGS += -std=c99
 # GENERAL-OPTS
 COMPILER_FLAGS += 
 # LIBRARIES
-COMPILER_FLAGS += `pkg-config --libs --cflags glib-2.0` 
+COMPILER_FLAGS += `pkg-config --libs glib-2.0` `pkg-config --libs --cflags gio-2.0` 
 
 # LINKER-SCRIPT
 LDFLAGS += 
@@ -40,4 +40,4 @@ LDFLAGS +=
 # LINKER-OPTS
 LDFLAGS += 
 # LIBRARIES
-LDFLAGS += `pkg-config --libs --cflags glib-2.0` 
+LDFLAGS += `pkg-config --libs glib-2.0` `pkg-config --libs --cflags gio-2.0` 

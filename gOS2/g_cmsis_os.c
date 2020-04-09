@@ -34,6 +34,10 @@ struct _OSDelay {
 typedef struct _OSDelay GOSDelay;
 
 
+GOSThread* g_osThread_new(const gchar *name, osThreadFunc_t func, void *data);
+void g_osThread_free(GOSThread* thread);
+
+
 static GMainLoop *gLoop = NULL;
 static GMainContext *gContext = NULL;
 static GCond gStartThread;
@@ -72,13 +76,14 @@ osStatus_t osDelay(uint32_t ticks) {
 }
 
 gpointer wrapper_gThreadFuc(gpointer data) {
-	GOSThread *osth = (GOSThread*) data;
-	g_mutex_lock(&(osth->startMux));
-	g_cond_wait(osth->startCond, &(osth->startMux));
-	g_mutex_unlock(&(osth->startMux));
+	GOSThread *t = (GOSThread*) data;
+	g_mutex_lock(&(t->startMux));
+	g_cond_wait(t->startCond, &(t->startMux));
+	g_mutex_unlock(&(t->startMux));
 
-	osth->func(osth->args);
+	t->func(t->args);
 
+	g_osThread_free(t);
 	g_thread_exit(NULL);
 	return NULL;
 }
@@ -96,13 +101,28 @@ GOSThread* g_osThread_new(const gchar *name, osThreadFunc_t func, void *data) {
 	t->func = func;
 	t->args = data;
 	t->thread = g_thread_new(name, wrapper_gThreadFuc, (gpointer) t);
-
 	return t;
+
+}
+
+void g_osThread_free(GOSThread* t) {
+	g_free(t);
 }
 
 osThreadId_t osThreadNew(osThreadFunc_t func, void *argument,
 		const osThreadAttr_t *attr) {
 	return g_osThread_new(attr->name, func, argument);
+}
+
+
+osStatus_t osThreadYield (void) {
+	g_thread_yield();
+	return osOK;
+}
+
+
+__NO_RETURN void osThreadExit (void) {
+	g_thread_exit(NULL);
 }
 
 osMessageQueueId_t osMessageQueueNew(uint32_t msg_count, uint32_t msg_size,

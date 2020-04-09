@@ -1,7 +1,7 @@
 import os
 from os.path import basename
-from pybuild import git
-from pybuild import MKVARS
+from pymakelib import git
+from pymakelib import MKVARS
 
 
 def getProjectSettings():
@@ -43,11 +43,11 @@ def getCompilerSet():
         'SIZE':     'size',
         'OBJDUMP':  'objdump',
         'INCLUDES': [
-            '/usr/lib/gcc/x86_64-linux-gnu/5/include',
+            '/usr/lib/gcc/x86_64-linux-gnu/7/include',
             '/usr/local/include',
-            "/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed",
+            '/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed',
             '/usr/include/x86_64-linux-gnu',
-            "/usr/include",
+            '/usr/include',
             '/var/lib/gems/2.3.0/gems/ceedling-0.29.1/vendor/unity/src/',
             '/usr/include/glib-2.0',
             '/usr/lib/x86_64-linux-gnu/glib-2.0/include',
@@ -55,7 +55,7 @@ def getCompilerSet():
     }
 
 
-LIBRARIES = ['`pkg-config --libs --cflags glib-2.0`']
+LIBRARIES = ['`pkg-config --libs glib-2.0`', '`pkg-config --libs --cflags gio-2.0`']
 
 def getCompilerOpts():
 

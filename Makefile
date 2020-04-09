@@ -33,11 +33,11 @@
 	@time -p $(MAKE) -f makefile.mk $@
 
 prebuild:
-	@python -B __init__.py
+	@pymaketool
 
 .PHONY: test
 test_%:
-	@python testing.py $(subst test_,,$@)
+	@pymaketesting $(subst test_,,$@)
 	$(MAKE) -C Test/ceedling $(subst test_,,$@)
 
 .INTERMEDIATE: prebuild

@@ -121,7 +121,7 @@ osStatus_t osThreadYield (void) {
 }
 
 
-__NO_RETURN void osThreadExit (void) {
+void osThreadExit (void) {
 	g_thread_exit(NULL);
 }
 

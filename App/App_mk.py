@@ -2,7 +2,7 @@ from  pymakelib.Module import ModuleHandle, GCC_CompilerOpts
 
 
 def getSrcs(mh: ModuleHandle):
-    return mh.getAllSrcsC()
+    return ['App/async-op.c']
 
 
 def getIncs(mh: ModuleHandle):

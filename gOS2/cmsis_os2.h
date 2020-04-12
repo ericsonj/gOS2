@@ -430,7 +430,7 @@ osStatus_t osThreadDetach (osThreadId_t thread_id);
 osStatus_t osThreadJoin (osThreadId_t thread_id);
  
 /// Terminate execution of current running thread.
-__NO_RETURN void osThreadExit (void);
+void osThreadExit (void);
  
 /// Terminate execution of a thread.
 /// \param[in]     thread_id     thread ID obtained by \ref osThreadNew or \ref osThreadGetId.

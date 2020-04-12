@@ -1,4 +1,5 @@
 import os
+import subprocess
 from os.path import basename
 from pymakelib import git
 from pymakelib import MKVARS
@@ -33,6 +34,22 @@ def getTargetsScript():
 
 
 def getCompilerSet():
+    GCC_INCLUDES = []
+    CEEDLING_INCLUDES = []
+    try:
+        res =  subprocess.check_output(["bash", "-c", "echo | gcc -Wp,-v -x c++ - -fsyntax-only &> /tmp/gccincs.tmp ; cat /tmp/gccincs.tmp |  grep '^[ ]*/usr.*'"])
+        for line in res.splitlines():
+            GCC_INCLUDES.append(line.decode('utf-8').strip())
+
+        res = subprocess.check_output(['bash', '-c', "find /var/lib/gems $HOME/.gem/ -name 'unity.h' 2>&1 | grep '.*ceedling-[0-9\\.\\-]*/vendor/unity/src'"])
+        for line in res.splitlines():
+            CEEDLING_INCLUDES.append(os.path.dirname(line.decode('utf-8').strip()))
+
+    except Exception as e:
+        print(e)
+
+    GLIB_INCLUDES = ['/usr/include/glib-2.0', '/usr/lib/x86_64-linux-gnu/glib-2.0/include']
+
     return {
         'CC':       'gcc',
         'CXX':      'g++',
@@ -42,16 +59,8 @@ def getCompilerSet():
         'OBJCOPY':  'objcopy',
         'SIZE':     'size',
         'OBJDUMP':  'objdump',
-        'INCLUDES': [
-            '/usr/lib/gcc/x86_64-linux-gnu/7/include',
-            '/usr/local/include',
-            '/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed',
-            '/usr/include/x86_64-linux-gnu',
-            '/usr/include',
-            '/var/lib/gems/2.3.0/gems/ceedling-0.29.1/vendor/unity/src/',
-            '/usr/include/glib-2.0',
-            '/usr/lib/x86_64-linux-gnu/glib-2.0/include',
-        ]
+        'INCLUDES': GCC_INCLUDES + CEEDLING_INCLUDES + GLIB_INCLUDES
+
     }
 
 

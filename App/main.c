@@ -9,7 +9,8 @@
 #include <math.h>
 #include <stdio.h>
 #include <time.h>
-
+#include <audio.h>
+#include "g_multimedia.h"
 
 static osMessageQueueId_t queue;
 
@@ -70,17 +71,24 @@ static void my_thread(GTask *task, gpointer source_object,
 	g_task_return_pointer(task, g_object_new(G_TYPE_OBJECT, NULL), g_object_unref);
 }
 
-int main() {
+int main(int argc, char *argv[]) {
 
+	g_multimedia_gstinit(argc, argv);
 	osKernelInitialize();
 
-	GCancellable* cancellable = g_cancellable_new();
+	AUDIO_Init_t audioInit = {
+			.SampleRate = 8000,
+			.ChannelsNbr = 1,
+			.Volume = 1
+	};
 
-	GObject *obj = g_object_new(G_TYPE_OBJECT, NULL);
-	GTask*  task = g_task_new(obj, cancellable, my_callback, obj);
-	g_object_unref(cancellable);
-	g_task_run_in_thread(task, my_thread);
-	g_object_unref(task);
+//	GCancellable* cancellable = g_cancellable_new();
+//
+//	GObject *obj = g_object_new(G_TYPE_OBJECT, NULL);
+//	GTask*  task = g_task_new(obj, cancellable, my_callback, obj);
+//	g_object_unref(cancellable);
+//	g_task_run_in_thread(task, my_thread);
+//	g_object_unref(task);
 
 	queue = osMessageQueueNew(10, sizeof(uint32_t), NULL);
 

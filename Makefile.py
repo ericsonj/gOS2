@@ -48,7 +48,7 @@ def getCompilerSet():
     except Exception as e:
         print(e)
 
-    GLIB_INCLUDES = ['/usr/include/glib-2.0', '/usr/lib/x86_64-linux-gnu/glib-2.0/include']
+    GLIB_INCLUDES = ['/usr/include/gstreamer-1.0', '/usr/include/glib-2.0', '/usr/lib/x86_64-linux-gnu/glib-2.0/include']
 
     return {
         'CC':       'gcc',
@@ -64,7 +64,11 @@ def getCompilerSet():
     }
 
 
-LIBRARIES = ['`pkg-config --libs glib-2.0`', '`pkg-config --libs --cflags gio-2.0`']
+LIBRARIES = [
+    '`pkg-config --libs glib-2.0`',
+    '`pkg-config --libs --cflags gio-2.0`',
+    '`pkg-config --libs --cflags gstreamer-1.0`',
+]
 
 def getCompilerOpts():
 

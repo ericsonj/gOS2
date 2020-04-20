@@ -27,6 +27,8 @@ GMultimedia* g_multimedia_initByPipeline(GstElement* pipeline);
 
 void g_multimedia_start(const gchar* name, GMultimedia *media);
 
+void g_multimedia_stop(GMultimedia *media);
+
 gpointer g_multimedia_thfunc(gpointer data);
 
 #endif /* GOS2_G_MULTIMEDIA_H_ */

@@ -8,17 +8,10 @@
 #ifndef GOS2_TASK_H_
 #define GOS2_TASK_H_
 
+
+#include "FreeRTOS.h"
 #include "cmsis_os2.h"
 
-
-typedef long BaseType_t;
-typedef unsigned long UBaseType_t;
-
-#define pdFALSE			( ( BaseType_t ) 0 )
-#define pdTRUE			( ( BaseType_t ) 1 )
-
-#define pdPASS			( pdTRUE )
-#define pdFAIL			( pdFALSE )
 
 typedef osThreadId_t TaskHandle_t;
 
@@ -34,5 +27,6 @@ BaseType_t xTaskGenericCreate(
 		UBaseType_t uxPriority,
 		TaskHandle_t *const pxCreatedTask);
 
+void vTaskDelete( TaskHandle_t xTaskToDelete );
 
 #endif /* GOS2_TASK_H_ */

@@ -99,7 +99,7 @@ gpointer g_multimedia_thfunc(gpointer data) {
 			g_free(debug_info);
 			break;
 		case GST_MESSAGE_EOS:
-			g_print("TX End-Of-Stream reached.\n");
+			g_print("End-Of-Stream reached.\n");
 			break;
 		default:
 			/* We should not reach here because we only asked for ERRORs and EOS */
@@ -117,3 +117,10 @@ gpointer g_multimedia_thfunc(gpointer data) {
 	return NULL;
 }
 
+void g_multimedia_stop(GMultimedia *media) {
+
+    GstEvent *event;
+    event = gst_event_new_eos();
+    gst_element_send_event (media->pipeline, event);
+
+}

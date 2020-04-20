@@ -7,6 +7,7 @@
 #include <glib.h>
 #include <stdlib.h>
 #include "task.h"
+#include "queue.h"
 #include "portable.h"
 
 BaseType_t xTaskGenericCreate(
@@ -26,6 +27,28 @@ BaseType_t xTaskGenericCreate(
 		(*pxCreatedTask) = t;
 	}
 	return pdPASS;
+}
+
+void vTaskDelete( TaskHandle_t xTaskToDelete ){
+	if (xTaskToDelete == NULL) {
+		osThreadExit();
+	}
+}
+
+QueueHandle_t xQueueGenericCreate( const UBaseType_t uxQueueLength, const UBaseType_t uxItemSize) {
+	return osMessageQueueNew(uxQueueLength, uxItemSize, NULL);
+}
+
+BaseType_t xQueueGenericSend( QueueHandle_t xQueue, const void * const pvItemToQueue, TickType_t xTicksToWait){
+	osMessageQueuePut(xQueue, pvItemToQueue, 0, 0);
+	return pdPASS;
+}
+
+BaseType_t xQueueReceive( QueueHandle_t xQueue, void * const pvBuffer, TickType_t xTicksToWait ){
+	if (osMessageQueueGet(xQueue, pvBuffer,0, xTicksToWait) == osErrorTimeout){
+		return pdFALSE;
+	}
+	return pdTRUE;
 }
 
 

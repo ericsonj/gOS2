@@ -8,7 +8,18 @@
 #ifndef GOS2_PORTABLE_H_
 #define GOS2_PORTABLE_H_
 
+#include <stdint.h>
 #include <stdlib.h>
+
+typedef long BaseType_t;
+typedef unsigned long UBaseType_t;
+typedef uint32_t TickType_t;
+
+#define pdFALSE			( ( BaseType_t ) 0 )
+#define pdTRUE			( ( BaseType_t ) 1 )
+
+#define pdPASS			( pdTRUE )
+#define pdFAIL			( pdFALSE )
 
 void *pvPortMalloc( size_t xSize );
 void vPortFree( void *pv );

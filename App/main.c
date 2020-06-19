@@ -13,6 +13,7 @@
 #include "g_multimedia.h"
 
 static osMessageQueueId_t queue;
+static osSemaphoreId_t sem;
 
 void print_current_time_with_ms(void) {
 	long ms; // Milliseconds
@@ -31,6 +32,7 @@ void print_current_time_with_ms(void) {
 	printf("Current time: %"PRIdMAX".%03ld\n", (intmax_t) s, ms);
 
 }
+
 
 void timer2Thread(void *data) {
 	int i = 0;
@@ -57,19 +59,34 @@ void timer1Thread(void *data) {
 	}
 }
 
-static void my_callback(GObject *source_object, GAsyncResult *res,
-			gpointer user_data)
-{
-	printf("%p: %s\n", g_thread_self(), __func__);
 
+#if 0
+void timer2Thread(void *data) {
+	int i = 0;
+	for (; i < 10; i++) {
+		osDelay(1000);
+		osSemaphoreRelease(sem);
+	}
+	osThreadExit();
 }
 
-static void my_thread(GTask *task, gpointer source_object,
-			     gpointer task_data, GCancellable *cancellable)
-{
-	printf("%p: %s\n", g_thread_self(), __func__);
-	g_task_return_pointer(task, g_object_new(G_TYPE_OBJECT, NULL), g_object_unref);
+void timer1Thread(void *data) {
+
+	osThreadAttr_t thattr;
+	thattr.name = "time2";
+	osThreadNew(timer2Thread, NULL, &thattr);
+	uint32_t a = 0;
+
+	for (;;) {
+		osStatus_t res = osSemaphoreAcquire(sem, 2000);
+		if (res == osErrorTimeout) {
+			printf("%s\r\n", "Semaphore timeout");
+		} else {
+			printf("%s\r\n", "Release semaphore");
+		}
+	}
 }
+#endif
 
 int main(int argc, char *argv[]) {
 
@@ -82,15 +99,8 @@ int main(int argc, char *argv[]) {
 			.Volume = 1
 	};
 
-//	GCancellable* cancellable = g_cancellable_new();
-//
-//	GObject *obj = g_object_new(G_TYPE_OBJECT, NULL);
-//	GTask*  task = g_task_new(obj, cancellable, my_callback, obj);
-//	g_object_unref(cancellable);
-//	g_task_run_in_thread(task, my_thread);
-//	g_object_unref(task);
-
 	queue = osMessageQueueNew(10, sizeof(uint32_t), NULL);
+	sem = osSemaphoreNew(1, 1, NULL);
 
 	osThreadAttr_t thattr;
 	thattr.name = "time1";

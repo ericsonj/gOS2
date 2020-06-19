@@ -29,4 +29,6 @@ BaseType_t xTaskGenericCreate(
 
 void vTaskDelete( TaskHandle_t xTaskToDelete );
 
+void vTaskDelay( const TickType_t xTicksToDelay );
+
 #endif /* GOS2_TASK_H_ */

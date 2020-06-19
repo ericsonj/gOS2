@@ -35,6 +35,10 @@ void vTaskDelete( TaskHandle_t xTaskToDelete ){
 	}
 }
 
+void vTaskDelay( const TickType_t xTicksToDelay ) {
+	osDelay(xTicksToDelay);
+}
+
 QueueHandle_t xQueueGenericCreate( const UBaseType_t uxQueueLength, const UBaseType_t uxItemSize) {
 	return osMessageQueueNew(uxQueueLength, uxItemSize, NULL);
 }

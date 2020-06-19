@@ -33,6 +33,14 @@ struct _OSDelay {
 
 typedef struct _OSDelay GOSDelay;
 
+struct _GOSSemaphore {
+	GMutex mtx;
+	GCond cond;
+	gint32 max_count;
+	gint32 initial_count;
+};
+
+typedef struct _GOSSemaphore GOSSemaphore;
 
 GOSThread* g_osThread_new(const gchar *name, osThreadFunc_t func, void *data);
 void g_osThread_free(GOSThread* thread);
@@ -137,7 +145,9 @@ osStatus_t osMessageQueuePut(osMessageQueueId_t mq_id, const void *msg_ptr,
 		uint8_t msg_prio, uint32_t timeout) {
 	GOSQueue *q = (GOSQueue*) mq_id;
 	gpointer item = g_malloc(q->itemSize);
-	memcpy(item, msg_ptr, q->itemSize);
+	if (msg_ptr != NULL) {
+		memcpy(item, msg_ptr, q->itemSize);
+	}
 	g_async_queue_push(q->queue, (gpointer)item);
 	return osOK;
 }
@@ -150,7 +160,7 @@ osStatus_t osMessageQueueGet (osMessageQueueId_t mq_id, void *msg_ptr, uint8_t *
 	gpointer item = NULL;
 	do {
 		item = g_async_queue_timeout_pop(q->queue, timeout*1000);
-		if (item != NULL){
+		if (item != NULL) {
 			break;
 		}
 		current = osKernelGetTickCount();
@@ -160,10 +170,55 @@ osStatus_t osMessageQueueGet (osMessageQueueId_t mq_id, void *msg_ptr, uint8_t *
 		return osErrorTimeout;
 	}
 
-	memcpy(msg_ptr, item, q->itemSize);
+	if (msg_ptr != NULL) {
+		memcpy(msg_ptr, item, q->itemSize);
+	}
+
 	g_free(item);
+
 	return osOK;
 }
+
+osSemaphoreId_t osSemaphoreNew (uint32_t max_count, uint32_t initial_count, const osSemaphoreAttr_t *attr) {
+	GOSSemaphore *sem = (GOSSemaphore*)g_malloc(sizeof(GOSSemaphore));
+	g_mutex_init(&(sem->mtx));
+	g_cond_init(&(sem->cond));
+	sem->max_count = max_count;
+	sem->initial_count = initial_count;
+}
+
+osStatus_t osSemaphoreAcquire (osSemaphoreId_t semaphore_id, uint32_t timeout) {
+	GOSSemaphore *sem = (GOSSemaphore*)semaphore_id;
+	uint32_t now = osKernelGetTickCount();
+	uint32_t current;
+
+	g_mutex_lock (&(sem->mtx));
+	gint64 end_time = g_get_monotonic_time () + timeout*1000;
+	gboolean res = FALSE;
+
+	do {
+        res = g_cond_wait_until(&(sem->cond), &(sem->mtx), end_time);
+        if (res == TRUE) {
+        	break;
+        }
+        current = osKernelGetTickCount();
+    } while ((current - now) < timeout);
+
+    g_mutex_unlock(&(sem->mtx));
+	if (res ==  FALSE) {
+		return osErrorTimeout;
+	}
+	return osOK;
+}
+
+osStatus_t osSemaphoreRelease (osSemaphoreId_t semaphore_id) {
+	GOSSemaphore *sem = (GOSSemaphore*)semaphore_id;
+	g_mutex_lock (&(sem->mtx));
+	g_cond_signal(&(sem->cond));
+	g_mutex_unlock(&(sem->mtx));
+	return osOK;
+}
+
 
 gboolean esystick_callback(gpointer data) {
 	g_mutex_lock(&gTicksMutex);

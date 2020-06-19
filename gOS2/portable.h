@@ -21,6 +21,8 @@ typedef uint32_t TickType_t;
 #define pdPASS			( pdTRUE )
 #define pdFAIL			( pdFALSE )
 
+#define portTicksFromMs(X)  	(X)
+
 void *pvPortMalloc( size_t xSize );
 void vPortFree( void *pv );
 

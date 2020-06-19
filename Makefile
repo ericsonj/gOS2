@@ -1,5 +1,4 @@
 # Copyright (c) 2020, Ericson Joseph
-# 
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without modification,
@@ -29,11 +28,11 @@
 
 .DEFAULT_GOAL := all
 
-%:	prebuild
+%: prebuild
 	@time -p $(MAKE) -f makefile.mk $@
 
 prebuild:
-	@pymaketool
+	@pymaketool $(or $(MAKECMDGOALS),all)
 
 .PHONY: test
 test_%:

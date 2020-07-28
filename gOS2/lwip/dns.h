@@ -10,8 +10,7 @@
 
 #include "lwip/err.h"
 #include "lwip/socket.h"
-
-typedef in_addr_t ip_addr_t;
+#include "lwip/ip_addr.h"
 
 typedef void (*dns_found_callback)(const char *name, ip_addr_t *ipaddr,
                                    void *callback_arg);

@@ -16,8 +16,23 @@ struct ip4_addr {
 
 typedef struct ip4_addr ip4_addr_t;
 
-#define ipaddr_ntoa(ipaddr)  ip4addr_ntoa(ipaddr)
+/**
+ * @ingroup ipaddr
+ * A union struct for both IP version's addresses.
+ * ATTENTION: watch out for its size when adding IPv6 address scope!
+ */
+typedef struct ip_addr {
+  union {
+//    ip6_addr_t ip6;
+    ip4_addr_t ip4;
+  } u_addr;
+  /** @ref lwip_ip_addr_type */
+  uint8_t type;
+} ip_addr_t;
 
-char * ip4addr_ntoa(const ip4_addr_t *addr);
+
+//#define ipaddr_ntoa(ipaddr)  ip4addr_ntoa(ipaddr)
+
+char* ip4addr_ntoa(const ip4_addr_t *addr);
 
 #endif /* GOS2_LWIP_IP_ADDR_H_ */

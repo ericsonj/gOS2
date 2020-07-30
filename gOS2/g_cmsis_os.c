@@ -185,6 +185,7 @@ osSemaphoreId_t osSemaphoreNew (uint32_t max_count, uint32_t initial_count, cons
 	g_cond_init(&(sem->cond));
 	sem->max_count = max_count;
 	sem->initial_count = initial_count;
+	return sem;
 }
 
 osStatus_t osSemaphoreAcquire (osSemaphoreId_t semaphore_id, uint32_t timeout) {
@@ -246,7 +247,7 @@ gboolean esystick_callback(gpointer data) {
 osStatus_t osKernelInitialize(void) {
 
 	GSource *source;
-	int id;
+//	int id;
 
 	source = g_timeout_source_new(1);
 	gContext = g_main_context_new();
@@ -254,7 +255,7 @@ osStatus_t osKernelInitialize(void) {
 
 	g_cond_init(&gStartThread);
 
-	id = g_source_attach(source, gContext);
+	g_source_attach(source, gContext);
 	gLoop = g_main_loop_new(gContext, FALSE);
 	g_source_set_callback(source, esystick_callback, gLoop, NULL);
 

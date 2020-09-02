@@ -9,6 +9,7 @@
 #include "task.h"
 #include "queue.h"
 #include "portable.h"
+#include "semphr.h"
 
 BaseType_t xTaskGenericCreate(
 		osThreadFunc_t pvTaskCode,
@@ -55,6 +56,13 @@ BaseType_t xQueueReceive( QueueHandle_t xQueue, void * const pvBuffer, TickType_
 	return pdTRUE;
 }
 
+QueueHandle_t xSemaphoreCreateCounting(const UBaseType_t max, const UBaseType_t init) {
+	QueueHandle_t res = xQueueGenericCreate(( UBaseType_t ) 1, semSEMAPHORE_QUEUE_ITEM_LENGTH);
+	for (UBaseType_t i = 0; i < init; i++) {
+		xSemaphoreGive(res);
+	}
+	return res;
+}
 
 void *pvPortMalloc( size_t xSize ) {
 	return g_malloc((gsize)xSize);

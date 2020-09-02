@@ -23,6 +23,8 @@ typedef uint32_t TickType_t;
 
 #define portTicksFromMs(X)  	(X)
 
+#define	portTICK_PERIOD_MS       1 /*1 MS*/
+
 void *pvPortMalloc( size_t xSize );
 void vPortFree( void *pv );
 

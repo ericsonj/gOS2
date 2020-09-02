@@ -23,5 +23,6 @@ typedef QueueHandle_t SemaphoreHandle_t;
 
 #define xSemaphoreGive( xSemaphore )	xQueueGenericSend( ( QueueHandle_t ) ( xSemaphore ), NULL, semGIVE_BLOCK_TIME)
 
+QueueHandle_t xSemaphoreCreateCounting(const UBaseType_t max, const UBaseType_t init);
 
 #endif /* GOS2_SEMPHR_H_ */

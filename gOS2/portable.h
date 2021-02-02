@@ -25,6 +25,8 @@ typedef uint32_t TickType_t;
 
 #define	portTICK_PERIOD_MS       1 /*1 MS*/
 
+#define portMAX_DELAY	0xFFFFFFFFU
+
 void *pvPortMalloc( size_t xSize );
 void vPortFree( void *pv );
 

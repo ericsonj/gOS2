@@ -1,4 +1,4 @@
-from  pymakelib.Module import ModuleHandle, GCC_CompilerOpts
+from  pymakelib.module import ModuleHandle, GCC_CompilerOpts
 
 
 def getSrcs(mh: ModuleHandle):

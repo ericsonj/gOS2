@@ -3,6 +3,11 @@ import subprocess
 from os.path import basename
 from pymakelib import git
 from pymakelib import MKVARS
+from pymakelib import addon
+from pymakelib import eclipse_addon
+
+
+addon.add(eclipse_addon.EclipseAddon)
 
 
 def getProjectSettings():
@@ -48,7 +53,7 @@ def getCompilerSet():
     except Exception as e:
         print(e)
 
-    GLIB_INCLUDES = ['/usr/include/gstreamer-1.0', '/usr/include/glib-2.0', '/usr/lib/x86_64-linux-gnu/glib-2.0/include']
+    GLIB_INCLUDES = ['/usr/include/gstreamer-1.0', '/usr/include/glib-2.0', '/usr/lib/glib-2.0/include']
 
     return {
         'CC':       'gcc',
